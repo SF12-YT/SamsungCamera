@@ -99,6 +99,13 @@ jobs:
               if sum(map(len, lines_out)) > 90000:
                   lines_out.append("\n[Output truncated at 90 KB]")
                   break
+          focus_names = {"GalleryIntentHelper.java", "LatestMediaContent.java", "ImageUtils.java", "StorageUtils.java", "Constants.java", "PackageUtil.java"}
+          for file in root.rglob("*.java"):
+              if file.name in focus_names:
+                  rel = file.relative_to(root)
+                  dest = report / "focus_sources" / rel
+                  dest.parent.mkdir(parents=True, exist_ok=True)
+                  shutil.copy2(file, dest)
           (report / "gallery-hits.txt").write_text("\n".join(lines_out) if lines_out else "No Gallery-related strings found in JADX output.")
           (report / "source-summary.txt").write_text(
               f"Matched Java files: {seen}\nCopied related source files: {copied}\n"
